@@ -56,4 +56,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "car_id")
     private Car car;
+
+    /**
+     * Фото автомобиля
+     */
+    private byte[] photo;
 }

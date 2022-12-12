@@ -3,6 +3,9 @@ package ru.job4j.cars.repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Интерфейс, описывающий хранилище объектов, с методами CRUD
+ */
 public interface Repository<T> {
 
     /**

@@ -8,11 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Класс - реализация хранилища пользователей
+ * @see ru.job4j.cars.model.User
+ */
 @Repository
 @AllArgsConstructor
 public class HbmUserRepository implements UserRepository {
 
     private final CrudRepository crudRepository;
+    private static final String BY_ID = " WHERE id = :fId";
+    private static final String DELETE = "DELETE User" + BY_ID;
+    private static final String FIND_ALL = "from User";
+    private static final String LIKE_LOGIN = " where login LIKE :fKey";
+    private static final String BY_LOGIN = " where login = :fLogin";
 
     @Override
     public boolean create(User user) {
@@ -29,10 +38,7 @@ public class HbmUserRepository implements UserRepository {
     public boolean update(User user) {
         boolean result = true;
         try {
-            crudRepository.run(
-                    "UPDATE User SET login = :fLogin, password = :fPassword WHERE id = :fId",
-                    Map.of("fLogin", user.getLogin(), "fPassword", user.getPassword(), "fId", user.getId())
-            );
+            crudRepository.run(session -> session.merge(user));
         } catch (Exception e) {
             result = false;
         }
@@ -43,7 +49,7 @@ public class HbmUserRepository implements UserRepository {
     public boolean delete(int id) {
         boolean result = true;
         try {
-            crudRepository.run("DELETE User WHERE id = :fId", Map.of("fId", id));
+            crudRepository.run(DELETE, Map.of("fId", id));
         } catch (Exception e) {
             result = false;
         }
@@ -52,13 +58,13 @@ public class HbmUserRepository implements UserRepository {
 
     @Override
     public List<User> findAllOrderById() {
-        return crudRepository.query("from User", User.class);
+        return crudRepository.query(FIND_ALL, User.class);
     }
 
     @Override
     public Optional<User> findById(int id) {
         return crudRepository.optional(
-                "from User where id = :fId", User.class,
+                FIND_ALL + BY_ID, User.class,
                 Map.of("fId", id)
         );
     }
@@ -66,7 +72,7 @@ public class HbmUserRepository implements UserRepository {
     @Override
     public List<User> findByLikeLogin(String key) {
         return crudRepository.query(
-                "from User where login LIKE :fKey", User.class,
+                FIND_ALL + LIKE_LOGIN, User.class,
                 Map.of("fKey", "%" + key + "%")
         );
     }
@@ -74,7 +80,7 @@ public class HbmUserRepository implements UserRepository {
     @Override
     public Optional<User> findByLogin(String login) {
         return crudRepository.optional(
-                "from User where login = :fLogin", User.class,
+                FIND_ALL + BY_LOGIN, User.class,
                 Map.of("fLogin", login)
         );
     }

@@ -26,9 +26,14 @@ public class Car {
     private int id;
 
     /**
-     * Название автомобиля
+     * Марка автомобиля
      */
-    private String name;
+    private String brand;
+
+    /**
+     * Модель автомобиля
+     */
+    private String model;
 
     /**
      * Двигатель автомобиля
@@ -48,7 +53,7 @@ public class Car {
     /**
      * История всех владельцев автомобиля
      */
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "owner_history", joinColumns = {
             @JoinColumn(name = "car_id", nullable = false, updatable = false)},
             inverseJoinColumns = {
